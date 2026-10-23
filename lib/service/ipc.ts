@@ -3,7 +3,6 @@
 import { Pool, PoolConfig } from "pg";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { Document } from "@langchain/core/documents";
-import { CallbackHandler } from "@langfuse/langchain";
 import { RunnableLambda } from "@langchain/core/runnables";
 
 // 数据库配置
@@ -28,8 +27,6 @@ function getPool(): Pool {
   }
   return pool;
 }
-
-const langfuseHandler = new CallbackHandler();
 
 /**
  * 创建 OpenAI Compatible Embedding 模型实例
@@ -76,7 +73,7 @@ export async function addIPCToVectorStore(ipc: IPC): Promise<string> {
     // 生成向量 (仅使用中文描述)
     const vector = await RunnableLambda.from((text: string) =>
       embeddings.embedQuery(text),
-    ).invoke(ipc.description_zh, { callbacks: [langfuseHandler] });
+    ).invoke(ipc.description_zh);
 
     // 格式化向量为 pgvector 字符串格式
     const vectorStr = `[${vector.join(",")}]`;
@@ -135,7 +132,7 @@ export async function addIPCsToVectorStore(ipcs: IPC[]): Promise<string[]> {
     // 批量生成向量
     const vectors = await RunnableLambda.from((texts: string[]) =>
       embeddings.embedDocuments(texts),
-    ).invoke(contents, { callbacks: [langfuseHandler] });
+    ).invoke(contents);
 
     const ids: string[] = [];
     const batchSize = 100; // 这里的 batchSize 取决于 PostgreSQL 参数限制和性能权衡
@@ -206,7 +203,7 @@ export async function searchSimilarIPCs(
     // 生成查询向量
     const vector = await RunnableLambda.from((text: string) =>
       embeddings.embedQuery(text),
-    ).invoke(query, { callbacks: [langfuseHandler] });
+    ).invoke(query);
     const vectorStr = `[${vector.join(",")}]`;
 
     // 构建 SQL

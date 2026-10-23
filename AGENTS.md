@@ -53,4 +53,4 @@ Before handing off a meaningful code change:
 
 - Use environment variables for model and service configuration. See [Agent Reference](docs/agent-reference.md) for the current environment variable families.
 - Never commit real secrets from `.env`, API keys, OSS credentials, database passwords, or signed URLs.
-- Preserve existing OpenAI-compatible LangChain patterns and Langfuse callback wiring where present.
+- Preserve existing OpenAI-compatible LangChain patterns. Langfuse reporting has been retired; do not reintroduce its callbacks or runtime instrumentation.

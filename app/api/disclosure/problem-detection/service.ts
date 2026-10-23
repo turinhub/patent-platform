@@ -2,9 +2,6 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatOpenAI } from "@langchain/openai";
-import { CallbackHandler } from "@langfuse/langchain";
-
-const langfuseHandler = new CallbackHandler();
 
 const COMMON_PROBLEMS = `常见低级问题清单：
 
@@ -76,15 +73,10 @@ export async function streamProblemDetection(params: {
   technicalSolution: string;
 }) {
   try {
-    const stream = await problemDetectionChain.stream(
-      {
-        technicalSolution: params.technicalSolution,
-        commonProblems: COMMON_PROBLEMS,
-      },
-      {
-        callbacks: [langfuseHandler],
-      },
-    );
+    const stream = await problemDetectionChain.stream({
+      technicalSolution: params.technicalSolution,
+      commonProblems: COMMON_PROBLEMS,
+    });
     return stream;
   } catch (error) {
     console.error("技术方案问题检测时发生错误:", error);

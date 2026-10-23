@@ -4,7 +4,7 @@ This document holds repository reference material for AI coding agents. Keep imm
 
 ## Project Overview
 
-This is a patent workflow platform built with Next.js App Router, React, TypeScript, Tailwind CSS v4, shadcn/ui-style Radix components, LangChain/OpenAI-compatible model calls, Langfuse tracing, PostgreSQL, and S3-compatible OSS storage.
+This is a patent workflow platform built with Next.js App Router, React, TypeScript, Tailwind CSS v4, shadcn/ui-style Radix components, LangChain/OpenAI-compatible model calls, PostgreSQL, and S3-compatible OSS storage.
 
 The product surface is primarily Chinese-language patent assistance:
 
@@ -47,13 +47,12 @@ There is no dedicated test script at the time of writing. For behavior checks, u
 - `lib/` - shared types, utilities, and service clients/actions.
 - `lib/service/` - shared service integrations, such as chat, embeddings, IPC, OSS/S3, and storage clients.
 - `public/` - static assets and Word templates used by export flows.
-- `instrumentation.ts` and `instrumentation.node.ts` - runtime instrumentation hooks.
 
 ## AI, LangChain, And Observability
 
 - Model configuration should come from environment variables, especially `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `OPENAI_CHAT_MODEL`, `OPENAI_EMBEDDING_MODEL`, and `OPENAI_VISION_MODEL`.
 - Use OpenAI-compatible clients through the existing LangChain/OpenAI patterns unless a task requires a different provider.
-- Preserve Langfuse callback wiring where present. If adding new model chains, consider whether they should include `CallbackHandler` for traceability.
+- Langfuse reporting has been retired. Model calls run without Langfuse callbacks or runtime instrumentation; no `LANGFUSE_*` environment variables are required.
 - For JSON model outputs, use a structured parser and prompt for strict JSON. Handle parser failures clearly.
 - Keep timeouts and retry behavior explicit for long model calls.
 
