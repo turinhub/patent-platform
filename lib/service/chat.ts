@@ -1,14 +1,11 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { ChatOpenAI } from "@langchain/openai";
-import { CallbackHandler } from "@langfuse/langchain";
 import {
   createUIMessageStream,
   createUIMessageStreamResponse,
   type UIMessage,
 } from "ai";
-
-const langfuseHandler = new CallbackHandler();
 
 const MISSING_OPENAI_API_KEY_MESSAGE =
   "当前未配置 OPENAI_API_KEY，无法调用问答模型。请配置环境变量后重试。";
@@ -154,16 +151,11 @@ export async function streamQAUIMessageResponse(messages: UIMessage[]) {
   const promptTemplate = createQAPromptTemplate();
   const formattedHistory = formatHistory(history);
   const chain = RunnableSequence.from([promptTemplate, model]);
-  const stream = await chain.stream(
-    {
-      question,
-      history: formattedHistory,
-      context: "无特定上下文",
-    },
-    {
-      callbacks: [langfuseHandler],
-    },
-  );
+  const stream = await chain.stream({
+    question,
+    history: formattedHistory,
+    context: "无特定上下文",
+  });
   const uiMessageStream = createUIMessageStream({
     execute: async ({ writer }) => {
       const textId = "qa-answer";

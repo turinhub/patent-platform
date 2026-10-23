@@ -2,9 +2,6 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatOpenAI } from "@langchain/openai";
-import { CallbackHandler } from "@langfuse/langchain";
-
-const langfuseHandler = new CallbackHandler();
 
 // 技术方案优化模板
 const PROPOSAL_OPTIMIZATION_TEMPLATE_STRING = `你是一位专业的专利代理师和专利审查专家。请对以下专利交底书中的"技术方案"部分进行优化，使其更加专业、清晰、完整，并符合专利撰写要求。
@@ -68,9 +65,7 @@ export async function streamProposalText(params: {
 }) {
   try {
     console.log("开始优化技术方案，优化类型:", params.optimizationType);
-    const stream = await proposalOptimizationChain.stream(params, {
-      callbacks: [langfuseHandler],
-    });
+    const stream = await proposalOptimizationChain.stream(params);
     return stream;
   } catch (error) {
     console.error("技术方案优化时发生错误:", error);
@@ -88,9 +83,7 @@ export async function optimizeProposalText(params: {
   optimizationType: string;
 }): Promise<string> {
   try {
-    const result = await proposalOptimizationChain.invoke(params, {
-      callbacks: [langfuseHandler],
-    });
+    const result = await proposalOptimizationChain.invoke(params);
     return result;
   } catch (error) {
     console.error("技术方案优化时发生错误:", error);

@@ -3,10 +3,6 @@ import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatOpenAI } from "@langchain/openai";
 
-import { CallbackHandler } from "@langfuse/langchain";
-
-const langfuseHandler = new CallbackHandler();
-
 // 背景技术生成模板字符串
 const BACKGROUND_GENERATION_TEMPLATE_STRING = `你是一位专业的专利代理师，请根据以下信息为一份专利申请撰写"背景技术"（Background of the Invention）部分。
 
@@ -64,9 +60,7 @@ export async function streamBackground(params: {
   existingProblems: string;
 }) {
   try {
-    const stream = await backgroundGenerationChain.stream(params, {
-      callbacks: [langfuseHandler],
-    });
+    const stream = await backgroundGenerationChain.stream(params);
     return stream;
   } catch (error) {
     console.error("背景技术生成时发生错误:", error);

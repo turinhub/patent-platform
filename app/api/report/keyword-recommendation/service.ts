@@ -2,9 +2,6 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 import { ChatOpenAI } from "@langchain/openai";
-import { CallbackHandler } from "@langfuse/langchain";
-
-const langfuseHandler = new CallbackHandler();
 
 // 1. 核心改动：将“背景技术生成”提示词改为“关键词推荐”提示词
 const KEYWORD_RECOMMENDATION_TEMPLATE = `你是一位资深的专利审查员。请根据用户提供的核心专利关键词，生成一批高度相关、可用于专利检索或技术情报分析的扩展关联词。
@@ -74,9 +71,7 @@ export async function generateKeywords(params: {
     });
 
     const result = await Promise.race([
-      keywordRecommendationChain.invoke(params, {
-        callbacks: [langfuseHandler],
-      }),
+      keywordRecommendationChain.invoke(params),
       timeoutPromise,
     ]);
 

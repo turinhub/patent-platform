@@ -2,9 +2,6 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatOpenAI } from "@langchain/openai";
-import { CallbackHandler } from "@langfuse/langchain";
-
-const langfuseHandler = new CallbackHandler();
 
 const CONCLUSION_GENERATION_TEMPLATE_STRING = `你是一位专业的专利分析师，请根据以下信息为专利检索报告生成"结论与建议"部分。
 
@@ -58,9 +55,7 @@ export async function streamConclusion(params: {
   innovationAssessment: string;
 }) {
   try {
-    const stream = await conclusionGenerationChain.stream(params, {
-      callbacks: [langfuseHandler],
-    });
+    const stream = await conclusionGenerationChain.stream(params);
     return stream;
   } catch (error) {
     console.error("报告结论生成时发生错误:", error);
